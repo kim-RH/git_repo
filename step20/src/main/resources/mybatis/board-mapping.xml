@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis.board">
+	<select id="boardWrite" parameterType="dto">
+		INSERT into board VALUES (seq_board.nextval, #{id}, #{name}, #{subject}, #{content}, 0, sysdate)
+	</select>
+	<select id="boardList" parameterType="java.util.Map" resultType="dto">
+		<![CDATA[ select seq, id, name, subject, content, hit, to_char(logtime,'YYYY.MM.DD') as logtime
+		from (select rownum rn, tt.* from (select * from board order by seq desc) tt) where rn>=#{startNum} and rn<=#{endNum} ]]>
+	</select>
+	<select id="boardView" parameterType="int" resultType="dto">
+		SELECT * FROM board WHERE seq=#{seq}
+	</select>
+	<update id="updateHit" parameterType="int">
+		update board set hit = hit+1 where seq=#{seq}
+	</update>
+	<select id="getTotalA" resultType="int">
+		select count(*) as cnt from board
+	</select>
+	<delete id="boardDelete" parameterType="int">
+		DELETE board WHERE seq=#{seq}
+	</delete>
+</mapper>
